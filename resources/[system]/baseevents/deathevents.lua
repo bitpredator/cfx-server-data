@@ -1,4 +1,4 @@
-Citizen.CreateThread(function()
+CreateThread(function()
     local isDead = false
     local hasBeenDead = false
 	local diedAt
@@ -66,8 +66,10 @@ Citizen.CreateThread(function()
 end)
 
 function GetPlayerByEntityID(id)
-	for i=0,32 do
-		if(NetworkIsPlayerActive(i) and GetPlayerPed(i) == id) then return i end
-	end
-	return nil
+    for _, player in ipairs(GetActivePlayers()) do
+        if GetPlayerPed(player) == id then
+            return player
+        end
+    end
+    return nil
 end
