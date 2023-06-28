@@ -14,3 +14,7 @@ existing ones - anything goes, as long as you make sure to:
 1. Not break existing users/APIs.
 2. Not change default behavior without a toggle.
 3. Use best practices (convars over config files, native commands wherever possible, etc.)
+
+## Dependence
+The use of the following es_extended is recommended
+[es_extended]: https://github.com/bitpredator/es_extended/releases
