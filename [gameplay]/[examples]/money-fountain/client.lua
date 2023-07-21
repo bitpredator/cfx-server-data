@@ -59,7 +59,7 @@ CreateThread(function()
                             pressing = true
                         end
                     else
-                        if not IsControlPressed(0, 38 --[[ INPUT_PICKUP ]]) and 
+                        if not IsControlPressed(0, 38 --[[ INPUT_PICKUP ]]) and
                            not IsControlPressed(0, 47 --[[ INPUT_DETONATE ]]) then
                             pressing = false
                         end

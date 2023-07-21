@@ -121,7 +121,7 @@ AddEventHandler('chat:addTemplate', function(id, html)
   })
 end)
 
-AddEventHandler('chat:clear', function(name)
+AddEventHandler('chat:clear', function()
   SendNUIMessage({
     type = 'ON_CLEAR'
   })
@@ -193,21 +193,21 @@ local function refreshThemes()
   })
 end
 
-AddEventHandler('onClientResourceStart', function(resName)
+AddEventHandler('onClientResourceStart', function()
   Wait(500)
 
   refreshCommands()
   refreshThemes()
 end)
 
-AddEventHandler('onClientResourceStop', function(resName)
+AddEventHandler('onClientResourceStop', function()
   Wait(500)
 
   refreshCommands()
   refreshThemes()
 end)
 
-RegisterNUICallback('loaded', function(data, cb)
+RegisterNUICallback('loaded', function(_, cb)
   TriggerServerEvent('chat:init')
 
   refreshCommands()
