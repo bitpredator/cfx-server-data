@@ -201,7 +201,7 @@ local function routeMessage(source, author, message, mode, fromConsole)
     end
 end
 
-AddEventHandler('_chat:messageEntered', function(author, color, message, mode)
+AddEventHandler('_chat:messageEntered', function(author, _, message, mode)
     if not message or not author then
         return
     end
@@ -235,10 +235,6 @@ AddEventHandler('playerDropped', function(reason)
     end
 
     TriggerClientEvent('chatMessage', -1, '', { 255, 255, 255 }, '^2* ' .. GetPlayerName(source) ..' left (' .. reason .. ')')
-end)
-
-RegisterCommand('say', function(source, args, rawCommand)
-    routeMessage(source, (source == 0) and 'console' or GetPlayerName(source), rawCommand:sub(5), nil, true)
 end)
 
 -- command suggestions for clients

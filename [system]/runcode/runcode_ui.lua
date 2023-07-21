@@ -13,11 +13,11 @@ AddEventHandler('runcode:openUi', function(options)
     SendNuiMessage(json.encode(openData))
 end)
 
-RegisterNUICallback('getOpenData', function(args, cb)
+RegisterNUICallback('getOpenData', function(_, cb)
     cb(openData)
 end)
 
-RegisterNUICallback('doOk', function(args, cb)
+RegisterNUICallback('doOk', function(_, cb)
     SendNuiMessage(json.encode({
         type = 'ok'
     }))
@@ -27,7 +27,7 @@ RegisterNUICallback('doOk', function(args, cb)
     cb('ok')
 end)
 
-RegisterNUICallback('doClose', function(args, cb)
+RegisterNUICallback('doClose', function(_, cb)
     SendNuiMessage(json.encode({
         type = 'close'
     }))
