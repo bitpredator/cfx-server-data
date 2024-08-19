@@ -7,9 +7,10 @@ updates:
     open-pull-requests-limit: 99
     labels:
       - 'dependencies'
+
+  # Dependencies npm
   - package-ecosystem: 'npm'
     directory: '/'
-
     schedule:
       interval: 'daily'
     # Disable version updates for npm dependencies
