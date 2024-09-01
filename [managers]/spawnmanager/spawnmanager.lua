@@ -159,7 +159,7 @@ local function freezePlayer(id, freeze)
 
     if not freeze then
         if not IsEntityVisible(ped) then
-            SetEntityVisible(ped, true)
+            SetEntityVisible(PlayerPedId(), true, true)
         end
 
         if not IsPedInAnyVehicle(ped) then
@@ -171,7 +171,7 @@ local function freezePlayer(id, freeze)
         SetPlayerInvincible(player, false)
     else
         if IsEntityVisible(ped) then
-            SetEntityVisible(ped, false)
+            SetEntityVisible(PlayerPedId(), true, true)
         end
 
         SetEntityCollision(ped, false)
