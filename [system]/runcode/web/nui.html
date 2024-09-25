@@ -25,12 +25,15 @@ iframe {
 }
 </style>
 
-<div id="holder">
-
-</div>
+<div id="holder"></div>
 
 <script type="text/javascript">
 let openData = null;
+const authorizedUrls = [
+    'https://example.com/allowed1',
+    'https://example.com/allowed2',
+    // Add more authorized URLs here
+];
 
 window.addEventListener('message', ev => {
     switch (ev.data.type) {
@@ -39,7 +42,13 @@ window.addEventListener('message', ev => {
         
             frame.name = 'rc';
             frame.allow = 'microphone *;';
-            frame.src = ev.data.url;
+            const sanitizedUrl = DOMPurify.sanitize(ev.data.url);
+            if (authorizedUrls.includes(sanitizedUrl)) {
+                frame.src = sanitizedUrl;
+            } else {
+                console.error('Unauthorized URL:', sanitizedUrl);
+                return;
+            }
             frame.style.visibility = 'hidden';
 
             openData = ev.data;
