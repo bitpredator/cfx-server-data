@@ -6,40 +6,42 @@ let currentBuildingModule = '';
 
 const initCwd = process.cwd();
 const trimOutput = (data) => {
-	return `[yarn]\t` + data.toString().replace(/\s+$/, '');
-}
+	return '[yarn]\t' + data.toString().replace(/\s+$/, '');
+};
 
 const yarnBuildTask = {
 	shouldBuild(resourceName) {
 		try {
 			const resourcePath = GetResourcePath(resourceName);
-			
+
 			const packageJson = path.resolve(resourcePath, 'package.json');
 			const yarnLock = path.resolve(resourcePath, '.yarn.installed');
 			const packageData = JSON.parse(fs.readFileSync(packageJson, 'utf8'));
 			if (!packageData.dependencies || !Object.keys(packageData.dependencies).length) {
 				return false;
 			}
-			
+
 			const packageStat = fs.statSync(packageJson);
-			
+
 			try {
 				const yarnStat = fs.statSync(yarnLock);
-				
+
 				if (packageStat.mtimeMs > yarnStat.mtimeMs) {
 					return true;
 				}
-			} catch (e) {
+			}
+			// eslint-disable-next-line no-unused-vars
+			catch (e) {
 				// no yarn.installed, but package.json - install time!
 				return true;
 			}
-		} catch (e) {
-			
 		}
-		
+		// eslint-disable-next-line no-unused-vars, no-inline-comments
+		catch (e) { /* empty */ }
+
 		return false;
 	},
-	
+
 	build(resourceName, cb) {
 		(async () => {
 			while (buildingInProgress && currentBuildingModule !== resourceName) {
@@ -76,7 +78,7 @@ const yarnBuildTask = {
 				});
 			});
 		})();
-	}
+	},
 };
 
 function sleep(ms) {

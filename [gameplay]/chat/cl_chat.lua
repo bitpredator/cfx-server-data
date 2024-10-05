@@ -129,7 +129,7 @@ end)
 
 RegisterNUICallback('chatResult', function(data, cb)
   chatInputActive = false
-  SetNuiFocus(false)
+  SetNuiFocus(false, false)
 
   if not data.canceled then
     local id = PlayerId()
@@ -176,8 +176,8 @@ local function refreshThemes()
       local numThemes = GetNumResourceMetadata(resource, 'chat_theme')
 
       if numThemes > 0 then
-        local themeName = GetResourceMetadata(resource, 'chat_theme')
-        local themeData = json.decode(GetResourceMetadata(resource, 'chat_theme_extra') or 'null')
+        local themeName = GetResourceMetadata(resource, 'chat_theme', 0)
+        local themeData = json.decode(GetResourceMetadata(resource, 'chat_theme_extra', 0) or 'null')
 
         if themeName and themeData then
           themeData.baseUrl = 'nui://' .. resource .. '/'
@@ -250,7 +250,7 @@ end
 
 CreateThread(function()
   SetTextChatEnabled(false)
-  SetNuiFocus(false)
+  SetNuiFocus(false, false)
 
   local lastChatHideState = -1
   local origChatHideState = -1
@@ -271,7 +271,7 @@ CreateThread(function()
 
     if chatInputActivating then
       if not IsControlPressed(0, isRDR and `INPUT_MP_TEXT_CHAT_ALL` or 245) then
-        SetNuiFocus(true)
+        SetNuiFocus(true, true)
 
         chatInputActivating = false
       end
