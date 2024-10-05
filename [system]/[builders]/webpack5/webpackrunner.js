@@ -2,6 +2,7 @@ const webpack = require('webpack');
 const path = require('path');
 const fs = require('fs');
 
+// eslint-disable-next-line no-shadow
 function getStat(path) {
 	try {
 		const stat = fs.statSync(path);
@@ -11,7 +12,8 @@ function getStat(path) {
 			size: stat.size,
 			inode: stat.ino,
 		} : null;
-	} catch {
+	}
+	catch {
 		return null;
 	}
 }
@@ -27,7 +29,7 @@ class SaveStatePlugin {
 			for (const file of compilation.fileDependencies) {
 				this.cache.push({
 					name: file,
-					stats: getStat(file)
+					stats: getStat(file),
 				});
 			}
 		});
@@ -37,6 +39,7 @@ class SaveStatePlugin {
 				return;
 			}
 
+			// eslint-disable-next-line no-empty-function
 			fs.writeFile(this.cachePath, JSON.stringify(this.cache), () => {
 
 			});
@@ -46,7 +49,7 @@ class SaveStatePlugin {
 
 module.exports = (inp, callback) => {
 	const config = require(inp.configPath);
-	
+
 	config.context = inp.resourcePath;
 
 	if (config.output && config.output.path) {
@@ -58,18 +61,18 @@ module.exports = (inp, callback) => {
 	}
 
 	config.plugins.push(new SaveStatePlugin(inp));
-	
+
 	webpack(config, (err, stats) => {
 		if (err) {
 			callback(err);
 			return;
 		}
-		
+
 		if (stats.hasErrors()) {
 			callback(null, stats.toJson());
 			return;
 		}
-		
+
 		callback(null, {});
 	});
 };

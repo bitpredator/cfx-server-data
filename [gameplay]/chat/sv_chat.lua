@@ -1,34 +1,36 @@
-RegisterServerEvent('chat:init')
-RegisterServerEvent('chat:addTemplate')
-RegisterServerEvent('chat:addMessage')
-RegisterServerEvent('chat:addSuggestion')
-RegisterServerEvent('chat:removeSuggestion')
-RegisterServerEvent('_chat:messageEntered')
-RegisterServerEvent('chat:clear')
-RegisterServerEvent('__cfx_internal:commandFallback')
+RegisterServerEvent("chat:init")
+RegisterServerEvent("chat:addTemplate")
+RegisterServerEvent("chat:addMessage")
+RegisterServerEvent("chat:addSuggestion")
+RegisterServerEvent("chat:removeSuggestion")
+RegisterServerEvent("_chat:messageEntered")
+RegisterServerEvent("chat:clear")
+RegisterServerEvent("__cfx_internal:commandFallback")
 
 -- this is a built-in event, but somehow needs to be registered
-RegisterNetEvent('playerJoining')
+RegisterNetEvent("playerJoining")
 
-exports('addMessage', function(target, message)
+exports("addMessage", function(target, message)
     if not message then
         message = target
         target = -1
     end
 
-    if not target or not message then return end
+    if not target or not message then
+        return
+    end
 
-    TriggerClientEvent('chat:addMessage', target, message)
+    TriggerClientEvent("chat:addMessage", target, message)
 end)
 
 local hooks = {}
 local hookIdx = 1
 
-exports('registerMessageHook', function(hook)
+exports("registerMessageHook", function(hook)
     local resource = GetInvokingResource()
     hooks[hookIdx + 1] = {
         fn = hook,
-        resource = resource
+        resource = resource,
     }
 
     hookIdx = hookIdx + 1
@@ -49,7 +51,7 @@ local function getMatchingPlayers(seObject)
     return retval
 end
 
-exports('registerMode', function(modeData)
+exports("registerMode", function(modeData)
     if not modeData.name or not modeData.displayName or not modeData.cb then
         return false
     end
@@ -62,16 +64,16 @@ exports('registerMode', function(modeData)
     local clObj = {
         name = modeData.name,
         displayName = modeData.displayName,
-        color = modeData.color or '#fff',
+        color = modeData.color or "#fff",
         isChannel = modeData.isChannel,
         isGlobal = modeData.isGlobal,
     }
 
     if not modeData.seObject then
-        TriggerClientEvent('chat:addMode', -1, clObj)
+        TriggerClientEvent("chat:addMode", -1, clObj)
     else
         for _, v in ipairs(getMatchingPlayers(modeData.seObject)) do
-            TriggerClientEvent('chat:addMode', v, clObj)
+            TriggerClientEvent("chat:addMode", v, clObj)
         end
     end
 
@@ -100,8 +102,8 @@ local function unregisterHooks(resource)
     end
 
     for _, v in ipairs(toRemove) do
-        TriggerClientEvent('chat:removeMode', -1, {
-            name = v
+        TriggerClientEvent("chat:removeMode", -1, {
+            name = v,
         })
 
         modes[v] = nil
@@ -117,7 +119,7 @@ local function routeMessage(source, author, message, mode, fromConsole)
         color = { 255, 255, 255 },
         multiline = true,
         args = { message },
-        mode = mode
+        mode = mode,
     }
 
     if author ~= "" then
@@ -139,9 +141,9 @@ local function routeMessage(source, author, message, mode, fromConsole)
         updateMessage = function(t)
             -- shallow merge
             for k, v in pairs(t) do
-                if k == 'template' then
-                    outMessage['template'] = v:gsub('%{%}', outMessage['template'] or '@default')
-                elseif k == 'params' then
+                if k == "template" then
+                    outMessage["template"] = v:gsub("%{%}", outMessage["template"] or "@default")
+                elseif k == "params" then
                     if not outMessage.params then
                         outMessage.params = {}
                     end
@@ -165,7 +167,7 @@ local function routeMessage(source, author, message, mode, fromConsole)
 
         setRouting = function(target)
             routingTarget = target
-        end
+        end,
     }
 
     for _, hook in pairs(hooks) do
@@ -184,24 +186,24 @@ local function routeMessage(source, author, message, mode, fromConsole)
         return
     end
 
-    TriggerEvent('chatMessage', source, #outMessage.args > 1 and outMessage.args[1] or '', outMessage.args[#outMessage.args])
+    TriggerEvent("chatMessage", source, #outMessage.args > 1 and outMessage.args[1] or "", outMessage.args[#outMessage.args])
 
     if not WasEventCanceled() then
-        if type(routingTarget) ~= 'table' then
-            TriggerClientEvent('chat:addMessage', routingTarget, outMessage)
+        if type(routingTarget) ~= "table" then
+            TriggerClientEvent("chat:addMessage", routingTarget, outMessage)
         else
             for _, id in ipairs(routingTarget) do
-                TriggerClientEvent('chat:addMessage', id, outMessage)
+                TriggerClientEvent("chat:addMessage", id, outMessage)
             end
         end
     end
 
     if not fromConsole then
-        print(author .. '^7' .. (modes[mode] and (' (' .. modes[mode].displayName .. ')') or '') .. ': ' .. message .. '^7')
+        print(author .. "^7" .. (modes[mode] and (" (" .. modes[mode].displayName .. ")") or "") .. ": " .. message .. "^7")
     end
 end
 
-AddEventHandler('_chat:messageEntered', function(author, _, message, mode)
+AddEventHandler("_chat:messageEntered", function(author, _, message, mode)
     if not message or not author then
         return
     end
@@ -211,30 +213,34 @@ AddEventHandler('_chat:messageEntered', function(author, _, message, mode)
     routeMessage(source, author, message, mode)
 end)
 
-AddEventHandler('__cfx_internal:commandFallback', function(command)
+AddEventHandler("__cfx_internal:commandFallback", function(command)
     local name = GetPlayerName(source)
 
     -- route the message as if it were a /command
-    routeMessage(source, name, '/' .. command, nil, true)
+    routeMessage(source, name, "/" .. command, nil, true)
 
     CancelEvent()
 end)
 
 -- player join messages
-AddEventHandler('playerJoining', function()
-    if GetConvarInt('chat_showJoins', 1) == 0 then
+AddEventHandler("playerJoining", function()
+    if GetConvarInt("chat_showJoins", 1) == 0 then
         return
     end
 
-    TriggerClientEvent('chatMessage', -1, '', { 255, 255, 255 }, '^2* ' .. GetPlayerName(source) .. ' joined.')
+    TriggerClientEvent("chatMessage", -1, "", { 255, 255, 255 }, "^2* " .. GetPlayerName(source) .. " joined.")
 end)
 
-AddEventHandler('playerDropped', function(reason)
-    if GetConvarInt('chat_showQuits', 1) == 0 then
+AddEventHandler("playerDropped", function(reason)
+    if GetConvarInt("chat_showQuits", 1) == 0 then
         return
     end
 
-    TriggerClientEvent('chatMessage', -1, '', { 255, 255, 255 }, '^2* ' .. GetPlayerName(source) ..' left (' .. reason .. ')')
+    TriggerClientEvent("chatMessage", -1, "", { 255, 255, 255 }, "^2* " .. GetPlayerName(source) .. " left (" .. reason .. ")")
+end)
+
+RegisterCommand("say", function(source, args, rawCommand)
+    TriggerClientEvent("chatMessage", -1, (source == 0) and "console" or GetPlayerName(source), { 255, 255, 255 }, rawCommand:sub(5))
 end)
 
 -- command suggestions for clients
@@ -245,19 +251,19 @@ local function refreshCommands(player)
         local suggestions = {}
 
         for _, command in ipairs(registeredCommands) do
-            if IsPlayerAceAllowed(player, ('command.%s'):format(command.name)) then
+            if IsPlayerAceAllowed(player, ("command.%s"):format(command.name)) then
                 table.insert(suggestions, {
-                    name = '/' .. command.name,
-                    help = ''
+                    name = "/" .. command.name,
+                    help = "",
                 })
             end
         end
 
-        TriggerClientEvent('chat:addSuggestions', player, suggestions)
+        TriggerClientEvent("chat:addSuggestions", player, suggestions)
     end
 end
 
-AddEventHandler('chat:init', function()
+AddEventHandler("chat:init", function()
     local source = source
     refreshCommands(source)
 
@@ -265,18 +271,18 @@ AddEventHandler('chat:init', function()
         local clObj = {
             name = modeData.name,
             displayName = modeData.displayName,
-            color = modeData.color or '#fff',
+            color = modeData.color or "#fff",
             isChannel = modeData.isChannel,
             isGlobal = modeData.isGlobal,
         }
 
         if not modeData.seObject or IsPlayerAceAllowed(source, modeData.seObject) then
-            TriggerClientEvent('chat:addMode', source, clObj)
+            TriggerClientEvent("chat:addMode", source, clObj)
         end
     end
 end)
 
-AddEventHandler('onServerResourceStart', function(resName)
+AddEventHandler("onServerResourceStart", function(resName)
     Wait(500)
 
     for _, player in ipairs(GetPlayers()) do
@@ -284,6 +290,6 @@ AddEventHandler('onServerResourceStart', function(resName)
     end
 end)
 
-AddEventHandler('onResourceStop', function(resName)
+AddEventHandler("onResourceStop", function(resName)
     unregisterHooks(resName)
 end)

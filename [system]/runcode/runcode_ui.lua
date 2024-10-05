@@ -1,56 +1,56 @@
 local openData
 
-RegisterNetEvent('runcode:openUi')
+RegisterNetEvent("runcode:openUi")
 
-AddEventHandler('runcode:openUi', function(options)
+AddEventHandler("runcode:openUi", function(options)
     openData = {
-        type = 'open',
+        type = "open",
         options = options,
-        url = 'http://' .. GetCurrentServerEndpoint() .. '/' .. GetCurrentResourceName() .. '/',
-        res = GetCurrentResourceName()
+        url = "http://" .. GetCurrentServerEndpoint() .. "/" .. GetCurrentResourceName() .. "/",
+        res = GetCurrentResourceName(),
     }
 
     SendNuiMessage(json.encode(openData))
 end)
 
-RegisterNUICallback('getOpenData', function(_, cb)
+RegisterNUICallback("getOpenData", function(_, cb)
     cb(openData)
 end)
 
-RegisterNUICallback('doOk', function(_, cb)
+RegisterNUICallback("doOk", function(_, cb)
     SendNuiMessage(json.encode({
-        type = 'ok'
+        type = "ok",
     }))
 
     SetNuiFocus(true, true)
 
-    cb('ok')
+    cb("ok")
 end)
 
-RegisterNUICallback('doClose', function(_, cb)
+RegisterNUICallback("doClose", function(_, cb)
     SendNuiMessage(json.encode({
-        type = 'close'
+        type = "close",
     }))
 
     SetNuiFocus(false, false)
 
-    cb('ok')
+    cb("ok")
 end)
 
 local rcCbs = {}
 local id = 1
 
-RegisterNUICallback('runCodeInBand', function(args, cb)
+RegisterNUICallback("runCodeInBand", function(args, cb)
     id = id + 1
 
     rcCbs[id] = cb
 
-    TriggerServerEvent('runcode:runInBand', id, args)
+    TriggerServerEvent("runcode:runInBand", id, args)
 end)
 
-RegisterNetEvent('runcode:inBandResult')
+RegisterNetEvent("runcode:inBandResult")
 
-AddEventHandler('runcode:inBandResult', function(id, result)
+AddEventHandler("runcode:inBandResult", function(id, result)
     if rcCbs[id] then
         local cb = rcCbs[id]
         rcCbs[id] = nil
@@ -59,7 +59,7 @@ AddEventHandler('runcode:inBandResult', function(id, result)
     end
 end)
 
-AddEventHandler('onResourceStop', function(resourceName)
+AddEventHandler("onResourceStop", function(resourceName)
     if resourceName == GetCurrentResourceName() then
         SetNuiFocus(false, false)
     end

@@ -106,7 +106,7 @@ export default Vue.extend({
       const typeRef = item.type as
         'ON_OPEN' | 'ON_SCREEN_STATE_CHANGE' | 'ON_MESSAGE' | 'ON_CLEAR' | 'ON_SUGGESTION_ADD' |
         'ON_SUGGESTION_REMOVE' | 'ON_TEMPLATE_ADD' | 'ON_UPDATE_THEMES' | 'ON_MODE_ADD' | 'ON_MODE_REMOVE';
-
+ 
       const validMethods = [
         'ON_OPEN', 'ON_SCREEN_STATE_CHANGE', 'ON_MESSAGE', 'ON_CLEAR', 'ON_SUGGESTION_ADD',
         'ON_SUGGESTION_REMOVE', 'ON_TEMPLATE_ADD', 'ON_UPDATE_THEMES', 'ON_MODE_ADD', 'ON_MODE_REMOVE'

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>fivem runcode</title>
 
@@ -10,67 +11,68 @@
 	<script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 
 	<style type="text/css">
-	body {
-		font-family: "Segoe UI", sans-serif;
-	}
+		body {
+			font-family: "Segoe UI", sans-serif;
+		}
 
-	.navbar {
-		z-index: inherit;
-	}
+		.navbar {
+			z-index: inherit;
+		}
 
-	html.in-nui {
-		overflow: hidden;
-		background: transparent;
+		html.in-nui {
+			overflow: hidden;
+			background: transparent;
 
-		margin-top: 5vh;
-		margin-left: 7.5vw;
-		margin-right: 7.5vw;
-		margin-bottom: 5vh;
+			margin-top: 5vh;
+			margin-left: 7.5vw;
+			margin-right: 7.5vw;
+			margin-bottom: 5vh;
 
-		height: calc(100% - 10vh);
+			height: calc(100% - 10vh);
 
-		position: relative;
-	}
+			position: relative;
+		}
 
-	html.in-nui body > div.bg {
-		background-color: rgba(0, 0, 0, 1);
-		position: absolute;
-		top: 0px;
-		bottom: 0px;
-		left: 0px;
-		right: 0px;
-		z-index: -999;
+		html.in-nui body>div.bg {
+			background-color: rgba(0, 0, 0, 1);
+			position: absolute;
+			top: 0px;
+			bottom: 0px;
+			left: 0px;
+			right: 0px;
+			z-index: -999;
 
-		box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.56);  
-	}
+			box-shadow: 0 22px 70px 4px rgba(0, 0, 0, 0.56);
+		}
 
-	span.nui-edition {
-		display: none;
-	}
+		span.nui-edition {
+			display: none;
+		}
 
-	html.in-nui span.nui-edition {
-		display: inline;
-	}
+		html.in-nui span.nui-edition {
+			display: inline;
+		}
 
-	#close {
-		display: none;
-	}
+		#close {
+			display: none;
+		}
 
-	html.in-nui #close {
-		display: block;
-	}
+		html.in-nui #close {
+			display: block;
+		}
 
-	#result {
-		margin-top: 0.5em;
-	}
+		#result {
+			margin-top: 0.5em;
+		}
 
-	.navbar {
-		border-top: none;
-		border-left: none;
-		border-right: none;
-	}
+		.navbar {
+			border-top: none;
+			border-left: none;
+			border-right: none;
+		}
 	</style>
 </head>
+
 <body>
 	<div class="bg">
 
@@ -83,7 +85,8 @@
 					<strong>runcode</strong> <span class="nui-edition">&nbsp;in-game</span>
 				</a>
 
-				<a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarMain">
+				<a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
+					data-target="navbarMain">
 					<span aria-hidden="true"></span>
 					<span aria-hidden="true"></span>
 					<span aria-hidden="true"></span>
@@ -100,31 +103,31 @@
 									</select>
 								</div>
 								<div class="icon is-small is-left">
-								<i class="fas fa-user"></i>
+									<i class="fas fa-user"></i>
 								</div>
 							</div>
 						</div>
 					</div>
 
 					<div class="navbar-item">
-							<div class="field has-addons" id="lang-toggle">
-								<p class="control">
-									<button class="button" id="lua-button">
-										<span class="icon is-small">
-											<i class="fas fa-moon"></i>
-										</span>
-										<span>Lua</span>
-									</button>
-								</p>
-								<p class="control">
-									<button class="button" id="js-button">
-										<span class="icon is-small">
-											<i class="fab fa-js"></i>
-										</span>
-										<span>JS</span>
-									</button>
-								</p>
-								<!-- TODO pending add-on resource that'll contain webpack'd compiler
+						<div class="field has-addons" id="lang-toggle">
+							<p class="control">
+								<button class="button" id="lua-button">
+									<span class="icon is-small">
+										<i class="fas fa-moon"></i>
+									</span>
+									<span>Lua</span>
+								</button>
+							</p>
+							<p class="control">
+								<button class="button" id="js-button">
+									<span class="icon is-small">
+										<i class="fab fa-js"></i>
+									</span>
+									<span>JS</span>
+								</button>
+							</p>
+							<!-- TODO pending add-on resource that'll contain webpack'd compiler
 								<p class="control">
 									<button class="button" id="ts-button">
 										<span class="icon is-small">
@@ -134,8 +137,8 @@
 									</button>
 								</p>
 								-->
-							</div>
 						</div>
+					</div>
 
 					<div class="navbar-item">
 						<div class="field has-addons" id="cl-sv-toggle">
@@ -170,12 +173,12 @@
 		<div class="container">
 			<div id="code-container" style="width:100%;height:60vh;border:1px solid grey"></div><br>
 			<div class="field" id="passwordField">
-			<p class="control has-icons-left">
-				<input class="input" type="password" id="password" placeholder="RCon Password">
-				<span class="icon is-small is-left">
-				<i class="fas fa-lock"></i>
-				</span>
-			</p>
+				<p class="control has-icons-left">
+					<input class="input" type="password" id="password" placeholder="RCon Password">
+					<span class="icon is-small is-left">
+						<i class="fas fa-lock"></i>
+					</span>
+				</p>
 			</div>
 			<button class="button is-primary" id="run">Run</button>
 			<div id="result">
@@ -199,7 +202,7 @@
 				const realClients = [['All', '-1'], ...clients];
 
 				const createdClients = new Set([...el.querySelectorAll('option').entries()].map(([i, el]) => el.value));
-				const existentClients = new Set(realClients.map(([ name, id ]) => id));
+				const existentClients = new Set(realClients.map(([name, id]) => id));
 
 				const toRemove = [...createdClients].filter(a => !existentClients.has(a));
 
@@ -228,7 +231,7 @@
 		let useClient = false;
 		let editServerCb = null;
 
-		[['#cl-button', true], ['#sv-button', false]].forEach(([ selector, isClient ]) => {
+		[['#cl-button', true], ['#sv-button', false]].forEach(([selector, isClient]) => {
 			const eh = () => {
 				if (isClient) {
 					document.querySelector('#cl-select').disabled = false;
@@ -258,7 +261,7 @@
 
 			document.querySelector(selector).addEventListener('click', ev => {
 				eh();
-				
+
 				ev.preventDefault();
 			});
 		});
@@ -278,7 +281,7 @@
 			return lang;
 		}
 
-		[['#lua-button', 'lua'], ['#js-button', 'js']/*, ['#ts-button', 'ts']*/].forEach(([ selector, langOpt ]) => {
+		[['#lua-button', 'lua'], ['#js-button', 'js']/*, ['#ts-button', 'ts']*/].forEach(([selector, langOpt]) => {
 			const eh = () => {
 				lang = langOpt;
 
@@ -302,7 +305,7 @@
 
 			document.querySelector(selector).addEventListener('click', ev => {
 				eh();
-				
+
 				ev.preventDefault();
 			});
 		});
@@ -321,50 +324,50 @@
 				method: 'POST',
 				body: '{}'
 			}).then(a => a.json())
-			  .then(a => {
-				openData = a;
+				.then(a => {
+					openData = a;
 
-				if (!openData.options.canServer) {
-					document.querySelector('#cl-sv-toggle').style.display = 'none';
+					if (!openData.options.canServer) {
+						document.querySelector('#cl-sv-toggle').style.display = 'none';
 
-					const trigger = document.createEvent('HTMLEvents');
-					trigger.initEvent('click', true, true);
+						const trigger = document.createEvent('HTMLEvents');
+						trigger.initEvent('click', true, true);
 
-					document.querySelector('#cl-button').dispatchEvent(trigger);
-				} else if (!openData.options.canClient && !openData.options.canSelf) {
-					document.querySelector('#cl-sv-toggle').style.display = 'none';
-					document.querySelector('#cl-field').style.display = 'none';
+						document.querySelector('#cl-button').dispatchEvent(trigger);
+					} else if (!openData.options.canClient && !openData.options.canSelf) {
+						document.querySelector('#cl-sv-toggle').style.display = 'none';
+						document.querySelector('#cl-field').style.display = 'none';
 
-					const trigger = document.createEvent('HTMLEvents');
-					trigger.initEvent('click', true, true);
+						const trigger = document.createEvent('HTMLEvents');
+						trigger.initEvent('click', true, true);
 
-					document.querySelector('#sv-button').dispatchEvent(trigger);
-				}
+						document.querySelector('#sv-button').dispatchEvent(trigger);
+					}
 
-				if (!openData.options.canClient && openData.options.canSelf) {
-					document.querySelector('#cl-field').style.display = 'none';
-				}
+					if (!openData.options.canClient && openData.options.canSelf) {
+						document.querySelector('#cl-field').style.display = 'none';
+					}
 
-				if (openData.options.saveData) {
-					const cb = () => {
-						if (initCb) {
-							initCb({
-								lastLang: openData.options.saveData.lastLang,
-								lastSnippet: openData.options.saveData.lastSnippet
-							});
-						} else {
-							setTimeout(cb, 50);
-						}
-					};
+					if (openData.options.saveData) {
+						const cb = () => {
+							if (initCb) {
+								initCb({
+									lastLang: openData.options.saveData.lastLang,
+									lastSnippet: openData.options.saveData.lastSnippet
+								});
+							} else {
+								setTimeout(cb, 50);
+							}
+						};
 
-					setTimeout(cb, 50);
-				}
-				
-				fetch(`https://${window.parent.GetParentResourceName()}/doOk`, {
-					method: 'POST',
-					body: '{}'
+						setTimeout(cb, 50);
+					}
+
+					fetch(`https://${window.parent.GetParentResourceName()}/doOk`, {
+						method: 'POST',
+						body: '{}'
+					});
 				});
-			  });
 
 			document.querySelector('#close button').addEventListener('click', ev => {
 				fetch(`https://${window.parent.GetParentResourceName()}/doClose`, {
@@ -384,8 +387,8 @@
 		const prefixClient = prefix.replace('{}', 'client');
 		const prefixServer = prefix.replace('{}', 'server');
 
-		require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@0.18.1/min/vs' }});
-		require(['vs/editor/editor.main'], function() {
+		require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@0.18.1/min/vs' } });
+		require(['vs/editor/editor.main'], function () {
 			const editor = monaco.editor.create(document.getElementById('code-container'), {
 				value: 'return 42',
 				language: 'lua'
@@ -483,4 +486,5 @@
 	</script>
 
 </body>
+
 </html>
