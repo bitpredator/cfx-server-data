@@ -3,25 +3,28 @@ local moneyTypes = {
     bank = `BANK_BALANCE`,
 }
 
-RegisterNetEvent('money:displayUpdate')
+RegisterNetEvent("money:displayUpdate", function(moneyType, amount)
+    local stat = moneyTypes[moneyType]
+    if not stat then
+        return
+    end
 
-AddEventHandler('money:displayUpdate', function(type, money)
-    local stat = moneyTypes[type]
-    if not stat then return end
-    StatSetInt(stat, math.floor(money))
+    StatSetInt(stat, math.floor(amount), true)
 end)
 
-TriggerServerEvent('money:requestDisplay')
+-- Richiede al server la visualizzazione iniziale all'avvio
+TriggerServerEvent("money:requestDisplay")
 
+-- Mostra HUD GTA per contanti e banca se si preme Z (default GTA: INPUT_MULTIPLAYER_INFO)
 CreateThread(function()
+    local displayKey = 20 -- INPUT_MULTIPLAYER_INFO (tasto Z)
     while true do
         Wait(0)
-
-        if IsControlJustPressed(0, 20) then
+        if IsControlJustPressed(0, displayKey) then
             SetMultiplayerBankCash()
             SetMultiplayerWalletCash()
 
-            Wait(4350)
+            Wait(4500)
 
             RemoveMultiplayerBankCash()
             RemoveMultiplayerWalletCash()
