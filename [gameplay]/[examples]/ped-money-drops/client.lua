@@ -1,41 +1,47 @@
-AddEventHandler('gameEventTriggered', function(eventName, args)
-    if eventName == 'CEventNetworkEntityDamage' then
-        local victim = args[1]
-        local culprit = args[2]
-        local isDead = args[4] == 1
-
-        if isDead then
-            local origCoords = GetEntityCoords(victim)
-            local pickup = CreatePickupRotate(`PICKUP_MONEY_VARIABLE`, origCoords.x, origCoords.y, origCoords.z - 0.7, 0.0, 0.0, 0.0, 512, 0, false, 0)
-            local netId = PedToNet(victim)
-
-            local undoStuff = { false }
-
-            CreateThread(function()
-                local self = PlayerPedId()
-
-                while not undoStuff[1] do
-                    Wait(50)
-
-                    if #(GetEntityCoords(self) - origCoords) < 2.5 and HasPickupBeenCollected(pickup) then
-                        TriggerServerEvent('money:tryPickup', netId)
-
-                        RemovePickup(pickup)
-                        break
-                    end
-                end
-
-                undoStuff[1] = true
-            end)
-
-            SetTimeout(15000, function()
-                if not undoStuff[1] then
-                    RemovePickup(pickup)
-                    undoStuff[1] = true
-                end
-            end)
-
-            TriggerServerEvent('money:allowPickupNear', netId)
-        end
+AddEventHandler("gameEventTriggered", function(eventName, args)
+    if eventName ~= "CEventNetworkEntityDamage" then
+        return
     end
+
+    local victim = args[1]
+    local culprit = args[2]
+    local isDead = args[4] == 1
+
+    if not isDead or not DoesEntityExist(victim) then
+        return
+    end
+
+    local coords = GetEntityCoords(victim)
+    local netId = PedToNet(victim)
+
+    -- Crea il pickup a terra
+    local pickup = CreatePickupRotate(`PICKUP_MONEY_VARIABLE`, coords.x, coords.y, coords.z - 0.7, 0.0, 0.0, 0.0, 512, 0, false, 0)
+
+    -- Flag per terminare i thread
+    local pickupHandled = false
+
+    -- Thread che controlla se il pickup è stato raccolto
+    CreateThread(function()
+        local playerPed = PlayerPedId()
+        while not pickupHandled do
+            Wait(100)
+
+            if #(GetEntityCoords(playerPed) - coords) < 2.5 and HasPickupBeenCollected(pickup) then
+                TriggerServerEvent("money:tryPickup", netId)
+                RemovePickup(pickup)
+                pickupHandled = true
+            end
+        end
+    end)
+
+    -- Timeout di 15 secondi per rimuovere il pickup se non raccolto
+    SetTimeout(15000, function()
+        if not pickupHandled then
+            RemovePickup(pickup)
+            pickupHandled = true
+        end
+    end)
+
+    -- Salva la posizione sul server per verifica futura
+    TriggerServerEvent("money:allowPickupNear", netId)
 end)

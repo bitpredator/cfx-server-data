@@ -1,42 +1,51 @@
 local safePositions = {}
 
-RegisterNetEvent('money:allowPickupNear')
+-- Quando un'entità viene uccisa, salviamo la sua posizione per un possibile pickup
+RegisterNetEvent("money:allowPickupNear", function(netId)
+    local entity = NetworkGetEntityFromNetworkId(netId)
+    if not DoesEntityExist(entity) then
+        return
+    end
 
-AddEventHandler('money:allowPickupNear', function(pedId)
-    local entity = NetworkGetEntityFromNetworkId(pedId)
-
+    -- Ritardo per evitare race condition
     Wait(250)
 
     if not DoesEntityExist(entity) then
         return
     end
-
     if GetEntityHealth(entity) > 100 then
         return
     end
 
-    local coords = GetEntityCoords(entity)
-    safePositions[pedId] = coords
+    safePositions[netId] = GetEntityCoords(entity)
 end)
 
-RegisterNetEvent('money:tryPickup')
+-- Quando un giocatore cerca di raccogliere il denaro
+RegisterNetEvent("money:tryPickup", function(netId)
+    local source = source
+    local pedCoords = GetEntityCoords(GetPlayerPed(source))
+    local dropCoords = safePositions[netId]
 
-AddEventHandler('money:tryPickup', function(entity)
-    if not safePositions[entity] then
+    if not dropCoords then
         return
     end
 
-    local source = source
-    local playerPed = GetPlayerPed(source)
-    local coords = GetEntityCoords(playerPed)
-
-    if #(safePositions[entity] - coords) < 2.5 then
-        exports['money']:addMoney(source, 'cash', 40)
+    -- Verifica distanza prima di dare il denaro
+    if #(dropCoords - pedCoords) < 2.5 then
+        local success = exports["money"]:addMoney(source, "cash", 40)
+        if success then
+            safePositions[netId] = nil
+        end
     end
-
-    safePositions[entity] = nil
 end)
 
-AddEventHandler('entityRemoved', function(entity)
-    safePositions[entity] = nil
+-- Pulizia della cache se un'entità viene rimossa
+AddEventHandler("entityRemoved", function(entity)
+    for netId, _ in pairs(safePositions) do
+        local ent = NetworkGetEntityFromNetworkId(netId)
+        if ent == entity then
+            safePositions[netId] = nil
+            break
+        end
+    end
 end)
