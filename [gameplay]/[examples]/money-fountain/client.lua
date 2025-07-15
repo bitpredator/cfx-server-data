@@ -1,95 +1,87 @@
--- add text entries for all the help types we have
-AddTextEntry('FOUNTAIN_HELP', 'This fountain currently contains $~1~.~n~Press ~INPUT_PICKUP~ to obtain $~1~.~n~Press ~INPUT_DETONATE~ to place $~1~.')
-AddTextEntry('FOUNTAIN_HELP_DRAINED', 'This fountain currently contains $~1~.~n~Press ~INPUT_DETONATE~ to place $~1~.')
-AddTextEntry('FOUNTAIN_HELP_BROKE', 'This fountain currently contains $~1~.~n~Press ~INPUT_PICKUP~ to obtain $~1~.')
-AddTextEntry('FOUNTAIN_HELP_BROKE_N_DRAINED', 'This fountain currently contains $~1~.')
-AddTextEntry('FOUNTAIN_HELP_INUSE', 'This fountain currently contains $~1~.~n~You can use it again in ~a~.')
+-- Text entries
+AddTextEntry("FOUNTAIN_HELP", "This fountain currently contains $~1~.~n~Press ~INPUT_PICKUP~ to obtain $~2~.~n~Press ~INPUT_DETONATE~ to place $~3~.")
+AddTextEntry("FOUNTAIN_HELP_DRAINED", "This fountain currently contains $~1~.~n~Press ~INPUT_DETONATE~ to place $~2~.")
+AddTextEntry("FOUNTAIN_HELP_BROKE", "This fountain currently contains $~1~.~n~Press ~INPUT_PICKUP~ to obtain $~2~.")
+AddTextEntry("FOUNTAIN_HELP_BROKE_N_DRAINED", "This fountain currently contains $~1~.")
+AddTextEntry("FOUNTAIN_HELP_INUSE", "This fountain currently contains $~1~.~n~You can use it again in ~a~.")
 
--- upvalue aliases so that we will be fast if far away
+-- Upvalue aliases
 local Wait = Wait
 local GetEntityCoords = GetEntityCoords
 local PlayerPedId = PlayerPedId
 
--- timer, don't tick as frequently if we're far from any money fountain
+-- Constants
+local INPUT_PICKUP = 38
+local INPUT_PLACE = 47
+local MARKER_DISTANCE = 40.0
+local INTERACT_DISTANCE = 1.0
+
+-- Relevance check timer
 local relevanceTimer = 500
 
+-- Main logic thread
 CreateThread(function()
     local pressing = false
 
     while true do
         Wait(relevanceTimer)
 
-        local coords = GetEntityCoords(PlayerPedId())
+        local playerPed = PlayerPedId()
+        local coords = GetEntityCoords(playerPed)
 
         for _, data in pairs(moneyFountains) do
-            -- if we're near this fountain
             local dist = #(coords - data.coords)
 
-            -- near enough to draw
-            if dist < 40 then
-                -- ensure per-frame tick
+            if dist < MARKER_DISTANCE then
                 relevanceTimer = 0
-
-                DrawMarker(29, data.coords.x, data.coords.y, data.coords.z, 0, 0, 0, 0.0, 0, 0, 1.0, 1.0, 1.0, 0, 150, 0, 120, false, true, 2, false, nil, nil, false)
+                DrawMarker(29, data.coords.x, data.coords.y, data.coords.z, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 0, 150, 0, 120, false, true, 2, false, nil, nil, false)
             else
-                -- put the relevance timer back to the way it was
                 relevanceTimer = 500
             end
 
-            -- near enough to use
-            if dist < 1 then
-                -- are we able to use it? if not, display appropriate help
+            if dist < INTERACT_DISTANCE then
                 local player = LocalPlayer
-                local nextUse = player.state['fountain_nextUse']
+                local nextUse = player.state["fountain_nextUse"]
+                local fountainAmount = GlobalState["fountain_" .. data.id] or 0
+                local playerCash = player.state["money_cash"] or 0
 
-                -- GetNetworkTime is synced for everyone
                 if nextUse and nextUse >= GetNetworkTime() then
-                    BeginTextCommandDisplayHelp('FOUNTAIN_HELP_INUSE')
-                    AddTextComponentInteger(GlobalState['fountain_' .. data.id])
-                    AddTextComponentSubstringTime(math.tointeger(nextUse - GetNetworkTime()), 2 | 4) -- seconds (2), minutes (4)
+                    BeginTextCommandDisplayHelp("FOUNTAIN_HELP_INUSE")
+                    AddTextComponentInteger(fountainAmount)
+                    AddTextComponentSubstringTime(math.tointeger(nextUse - GetNetworkTime()), 2 | 4)
                     EndTextCommandDisplayHelp(0, false, false, 1000)
                 else
-                    -- handle inputs for pickup/place
                     if not pressing then
-                        if IsControlPressed(0, 38 --[[ INPUT_PICKUP ]]) then
-                            TriggerServerEvent('money_fountain:tryPickup', data.id)
+                        if IsControlPressed(0, INPUT_PICKUP) then
+                            TriggerServerEvent("money_fountain:tryPickup", data.id)
                             pressing = true
-                        elseif IsControlPressed(0, 47 --[[ INPUT_DETONATE ]]) then
-                            TriggerServerEvent('money_fountain:tryPlace', data.id)
+                        elseif IsControlPressed(0, INPUT_PLACE) then
+                            TriggerServerEvent("money_fountain:tryPlace", data.id)
                             pressing = true
                         end
-                    else
-                        if not IsControlPressed(0, 38 --[[ INPUT_PICKUP ]]) and
-                           not IsControlPressed(0, 47 --[[ INPUT_DETONATE ]]) then
-                            pressing = false
-                        end
+                    elseif not IsControlPressed(0, INPUT_PICKUP) and not IsControlPressed(0, INPUT_PLACE) then
+                        pressing = false
                     end
 
-                    -- decide the appropriate help message
-                    local youCanSpend = (player.state['money_cash'] or 0) >= data.amount
-                    local fountainCanSpend = GlobalState['fountain_' .. data.id] >= data.amount
+                    local canPlayerPlace = playerCash >= data.amount
+                    local canFountainGive = fountainAmount >= data.amount
 
-                    local helpName
-
-                    if youCanSpend and fountainCanSpend then
-                        helpName = 'FOUNTAIN_HELP'
-                    elseif youCanSpend and not fountainCanSpend then
-                        helpName = 'FOUNTAIN_HELP_DRAINED'
-                    elseif not youCanSpend and fountainCanSpend then
-                        helpName = 'FOUNTAIN_HELP_BROKE'
-                    else
-                        helpName = 'FOUNTAIN_HELP_BROKE_N_DRAINED'
+                    local helpName = "FOUNTAIN_HELP_BROKE_N_DRAINED"
+                    if canPlayerPlace and canFountainGive then
+                        helpName = "FOUNTAIN_HELP"
+                    elseif canPlayerPlace then
+                        helpName = "FOUNTAIN_HELP_DRAINED"
+                    elseif canFountainGive then
+                        helpName = "FOUNTAIN_HELP_BROKE"
                     end
 
-                    -- and print it
                     BeginTextCommandDisplayHelp(helpName)
-                    AddTextComponentInteger(GlobalState['fountain_' .. data.id])
+                    AddTextComponentInteger(fountainAmount)
 
-                    if fountainCanSpend then
+                    if canFountainGive then
                         AddTextComponentInteger(data.amount)
                     end
-
-                    if youCanSpend then
+                    if canPlayerPlace then
                         AddTextComponentInteger(data.amount)
                     end
 

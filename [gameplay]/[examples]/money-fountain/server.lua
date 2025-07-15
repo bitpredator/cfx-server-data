@@ -1,105 +1,90 @@
--- track down what we've added to global state
+-- Global registry for sent state to prevent duplicate syncs
 local sentState = {}
 
--- money system
-local ms = exports['money']
+-- Money system export
+local moneySystem = exports["money"]
 
--- get the fountain content from storage
-local function getMoneyForId(fountainId)
-    return GetResourceKvpInt(('money:%s'):format(fountainId)) / 100.0
+-- Recupera la quantità di denaro in una fontana
+local function getMoneyForFountain(fountainId)
+    return GetResourceKvpInt(("money:%s"):format(fountainId)) / 100.0
 end
 
--- set the fountain content in storage + state
-local function setMoneyForId(fountainId, money)
-    GlobalState['fountain_' .. fountainId] = math.tointeger(money)
-
-    return SetResourceKvpInt(('money:%s'):format(fountainId), math.tointeger(money * 100.0))
+-- Imposta la quantità di denaro in una fontana e aggiorna GlobalState
+local function setMoneyForFountain(fountainId, amount)
+    local intAmount = math.tointeger(amount * 100.0)
+    GlobalState["fountain_" .. fountainId] = intAmount
+    return SetResourceKvpInt(("money:%s"):format(fountainId), intAmount)
 end
 
--- get the nearest fountain to the player + ID
-local function getMoneyFountain(id, source)
-    local coords = GetEntityCoords(GetPlayerPed(source))
+-- Trova una fontana vicina a un giocatore specifico
+local function getNearbyFountain(fountainId, source)
+    local playerCoords = GetEntityCoords(GetPlayerPed(source))
 
-    for _, v in pairs(moneyFountains) do
-        if v.id == id then
-            if #(v.coords - coords) < 2.5 then
-                return v
-            end
+    for _, fountain in pairs(moneyFountains) do
+        if fountain.id == fountainId and #(fountain.coords - playerCoords) < 2.5 then
+            return fountain
         end
     end
 
     return nil
 end
 
--- generic function for events
-local function handleFountainStuff(source, id, pickup)
-    -- if near the fountain we specify
-    local fountain = getMoneyFountain(id, source)
+-- Funzione generica per raccogliere o depositare denaro nella fontana
+local function processFountainInteraction(source, fountainId, isPickup)
+    local fountain = getNearbyFountain(fountainId, source)
+    if not fountain then
+        return
+    end
 
-    if fountain then
-        -- and we can actually use the fountain already
-        local player = Player(source)
+    local player = Player(source)
+    local cooldown = player.state["fountain_nextUse"] or 0
+    local currentTime = GetGameTimer()
 
-        local nextUse = player.state['fountain_nextUse']
-        if not nextUse then
-            nextUse = 0
-        end
+    if cooldown > currentTime then
+        return
+    end
 
-        -- GetGameTimer ~ GetNetworkTime on client
-        if nextUse <= GetGameTimer() then
-            -- not rate limited
-            local success = false
-            local money = getMoneyForId(fountain.id)
+    local fountainMoney = getMoneyForFountain(fountain.id)
+    local amount = fountain.amount
+    local success = false
 
-            -- decide the op
-            if pickup then
-                -- if the fountain is rich enough to get the per-use amount
-                if money >= fountain.amount then
-                    -- give the player money
-                    if ms:addMoney(source, 'cash', fountain.amount) then
-                        money -= fountain.amount
-                        success = true
-                    end
-                end
-            else
-                -- if the player is rich enough
-                if ms:removeMoney(source, 'cash', fountain.amount) then
-                    -- add to the fountain
-                    money += fountain.amount
-                    success = true
-                end
-            end
-
-            -- save it and set the player's cooldown
+    if isPickup then
+        if fountainMoney >= amount then
+            success = moneySystem:addMoney(source, "cash", amount)
             if success then
-                setMoneyForId(fountain.id, money)
-                player.state['fountain_nextUse'] = GetGameTimer() + GetConvarInt('moneyFountain_cooldown', 5000)
+                fountainMoney -= amount
             end
         end
+    else
+        success = moneySystem:removeMoney(source, "cash", amount)
+        if success then
+            fountainMoney += amount
+        end
+    end
+
+    if success then
+        setMoneyForFountain(fountain.id, fountainMoney)
+        player.state["fountain_nextUse"] = currentTime + GetConvarInt("moneyFountain_cooldown", 5000)
     end
 end
 
--- event for picking up fountain->player
-RegisterNetEvent('money_fountain:tryPickup')
-AddEventHandler('money_fountain:tryPickup', function(id)
-    handleFountainStuff(source, id, true)
+-- Evento: preleva denaro dalla fontana
+RegisterNetEvent("money_fountain:tryPickup", function(fountainId)
+    processFountainInteraction(source, fountainId, true)
 end)
 
--- event for donating player->fountain
-RegisterNetEvent('money_fountain:tryPlace')
-AddEventHandler('money_fountain:tryPlace', function(id)
-    handleFountainStuff(source, id, false)
+-- Evento: deposita denaro nella fontana
+RegisterNetEvent("money_fountain:tryPlace", function(fountainId)
+    processFountainInteraction(source, fountainId, false)
 end)
 
--- listener: if a new fountain is added, set its current money in state
+-- Thread per sincronizzare lo stato delle fontane non ancora inviate
 CreateThread(function()
     while true do
         Wait(500)
-
         for _, fountain in pairs(moneyFountains) do
             if not sentState[fountain.id] then
-                GlobalState['fountain_' .. fountain.id] = math.tointeger(getMoneyForId(fountain.id))
-
+                GlobalState["fountain_" .. fountain.id] = math.tointeger(getMoneyForFountain(fountain.id))
                 sentState[fountain.id] = true
             end
         end
