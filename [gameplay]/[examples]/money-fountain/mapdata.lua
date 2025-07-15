@@ -1,28 +1,37 @@
--- define the money fountain list (SHARED SCRIPT)
+-- SHARED SCRIPT: Money Fountain Registry
+
 moneyFountains = {}
+local nextFountainIndex = 1
 
--- index to know what to remove
-local fountainIdx = 1
-
-AddEventHandler('getMapDirectives', function(add)
-    -- add a 'money_fountain' map directive
-    add('money_fountain', function(state, name)
+AddEventHandler("getMapDirectives", function(add)
+    -- Register a custom map directive for 'money_fountain'
+    add("money_fountain", function(state, name)
         return function(data)
             local coords = data[1]
-            local amount = data.amount or 100
+            local amount = tonumber(data.amount) or 100
 
-            local idx = fountainIdx
-            fountainIdx += 1
+            if type(coords) ~= "vector3" then
+                print(("Invalid coordinates for fountain '%s'"):format(name))
+                return
+            end
 
-            moneyFountains[idx] = {
+            local index = nextFountainIndex
+            nextFountainIndex += 1
+
+            moneyFountains[index] = {
                 id = name,
                 coords = coords,
-                amount = amount
+                amount = amount,
             }
 
-            state.add('idx', idx)
+            -- Save index to later remove it
+            state.add("idx", index)
         end
     end, function(state)
-        moneyFountains[state.idx] = nil
+        -- Cleanup when the directive is removed
+        local idx = state.idx
+        if moneyFountains[idx] then
+            moneyFountains[idx] = nil
+        end
     end)
 end)
