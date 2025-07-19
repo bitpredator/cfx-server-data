@@ -1,74 +1,90 @@
 (function() {
-var Filters = {}
+	const Filters = {};
 
-var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-svg.setAttribute("style", "display:block;width:0px;height:0px");
-var defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+	const SVG_NS = 'http://www.w3.org/2000/svg';
 
-var blurFilter = document.createElementNS("http://www.w3.org/2000/svg", "filter");
-blurFilter.setAttribute("id", "svgBlurFilter");
-var feGaussianFilter = document.createElementNS("http://www.w3.org/2000/svg", "feGaussianBlur");
-feGaussianFilter.setAttribute("stdDeviation", "0 0");
-blurFilter.appendChild(feGaussianFilter);
-defs.appendChild(blurFilter);
-Filters._svgBlurFilter = feGaussianFilter;
+	function createElement(name, attributes = {}) {
+		const el = document.createElementNS(SVG_NS, name);
+		for (const [key, value] of Object.entries(attributes)) {
+			el.setAttribute(key, value);
+		}
+		return el;
+	}
 
-// Drop Shadow Filter
-var dropShadowFilter = document.createElementNS("http://www.w3.org/2000/svg", "filter");
-dropShadowFilter.setAttribute("id", "svgDropShadowFilter");
-var feGaussianFilter = document.createElementNS("http://www.w3.org/2000/svg", "feGaussianBlur");
-feGaussianFilter.setAttribute("in", "SourceAlpha");
-feGaussianFilter.setAttribute("stdDeviation", "3");
-dropShadowFilter.appendChild(feGaussianFilter);
-Filters._svgDropshadowFilterBlur = feGaussianFilter;
+	const svg = createElement('svg', {
+		style: 'position:absolute; width:0; height:0; overflow:hidden',
+	});
 
-var feOffset = document.createElementNS("http://www.w3.org/2000/svg", "feOffset");
-feOffset.setAttribute("dx", "0");
-feOffset.setAttribute("dy", "0");
-feOffset.setAttribute("result", "offsetblur");
-dropShadowFilter.appendChild(feOffset);
-Filters._svgDropshadowFilterOffset = feOffset;
+	const defs = createElement('defs');
 
-var feFlood = document.createElementNS("http://www.w3.org/2000/svg", "feFlood");
-feFlood.setAttribute("flood-color", "rgba(0,0,0,1)");
-dropShadowFilter.appendChild(feFlood);
-Filters._svgDropshadowFilterFlood = feFlood;
+	// --- Blur Filter ---
+	const blurFilter = createElement('filter', { id: 'svgBlurFilter' });
+	const feGaussianBlur = createElement('feGaussianBlur', { stdDeviation: '0 0' });
+	blurFilter.appendChild(feGaussianBlur);
+	defs.appendChild(blurFilter);
+	Filters._svgBlurFilter = feGaussianBlur;
 
-var feComposite = document.createElementNS("http://www.w3.org/2000/svg", "feComposite");
-feComposite.setAttribute("in2", "offsetblur");
-feComposite.setAttribute("operator", "in");
-dropShadowFilter.appendChild(feComposite);
-var feComposite = document.createElementNS("http://www.w3.org/2000/svg", "feComposite");
-feComposite.setAttribute("in2", "SourceAlpha");
-feComposite.setAttribute("operator", "out");
-feComposite.setAttribute("result", "outer");
-dropShadowFilter.appendChild(feComposite);
+	// --- Drop Shadow Filter ---
+	const dropShadowFilter = createElement('filter', { id: 'svgDropShadowFilter' });
 
-var feMerge = document.createElementNS("http://www.w3.org/2000/svg", "feMerge");
-var feMergeNode = document.createElementNS("http://www.w3.org/2000/svg", "feMergeNode");
-feMerge.appendChild(feMergeNode);
-var feMergeNode = document.createElementNS("http://www.w3.org/2000/svg", "feMergeNode");
-feMerge.appendChild(feMergeNode);
-Filters._svgDropshadowMergeNode = feMergeNode;
-dropShadowFilter.appendChild(feMerge);
-defs.appendChild(dropShadowFilter);
-svg.appendChild(defs);
-document.documentElement.appendChild(svg);
+	const feGaussianBlurShadow = createElement('feGaussianBlur', {
+		in: 'SourceAlpha',
+		stdDeviation: '3',
+	});
+	dropShadowFilter.appendChild(feGaussianBlurShadow);
+	Filters._svgDropshadowFilterBlur = feGaussianBlurShadow;
 
-const blurScale = 1;
-const scale = (document.body.clientWidth / 1280);
+	const feOffset = createElement('feOffset', {
+		dx: '0',
+		dy: '0',
+		result: 'offsetblur',
+	});
+	dropShadowFilter.appendChild(feOffset);
+	Filters._svgDropshadowFilterOffset = feOffset;
 
-Filters._svgDropshadowFilterBlur.setAttribute("stdDeviation",
-    1 * blurScale + " " +
-    1 * blurScale
-);
-Filters._svgDropshadowFilterOffset.setAttribute("dx",
-    String(Math.cos(45 * Math.PI / 180) * 1 * scale));
-Filters._svgDropshadowFilterOffset.setAttribute("dy",
-    String(Math.sin(45 * Math.PI / 180) * 1 * scale));
-Filters._svgDropshadowFilterFlood.setAttribute("flood-color",
-    'rgba(0, 0, 0, 1)');
-Filters._svgDropshadowMergeNode.setAttribute("in",
-    "SourceGraphic");
+	const feFlood = createElement('feFlood', {
+		'flood-color': 'rgba(0,0,0,1)',
+	});
+	dropShadowFilter.appendChild(feFlood);
+	Filters._svgDropshadowFilterFlood = feFlood;
+
+	const feCompositeIn = createElement('feComposite', {
+		in2: 'offsetblur',
+		operator: 'in',
+	});
+	dropShadowFilter.appendChild(feCompositeIn);
+
+	const feCompositeOut = createElement('feComposite', {
+		in2: 'SourceAlpha',
+		operator: 'out',
+		result: 'outer',
+	});
+	dropShadowFilter.appendChild(feCompositeOut);
+
+	const feMerge = createElement('feMerge');
+	const feMergeNode1 = createElement('feMergeNode');
+	feMerge.appendChild(feMergeNode1);
+	Filters._svgDropshadowMergeNode = feMergeNode1;
+
+	const feMergeNode2 = createElement('feMergeNode');
+	feMerge.appendChild(feMergeNode2);
+
+	dropShadowFilter.appendChild(feMerge);
+	defs.appendChild(dropShadowFilter);
+
+	svg.appendChild(defs);
+	document.documentElement.appendChild(svg);
+
+	// --- Dynamic Adjustment ---
+	const blurScale = 1;
+	const scale = document.body.clientWidth / 1280;
+	const shadowStrength = 1;
+	const angle = 45 * (Math.PI / 180);
+
+	Filters._svgDropshadowFilterBlur.setAttribute('stdDeviation', `${blurScale} ${blurScale}`);
+	Filters._svgDropshadowFilterOffset.setAttribute('dx', (Math.cos(angle) * shadowStrength * scale).toFixed(2));
+	Filters._svgDropshadowFilterOffset.setAttribute('dy', (Math.sin(angle) * shadowStrength * scale).toFixed(2));
+	Filters._svgDropshadowFilterFlood.setAttribute('flood-color', 'rgba(0, 0, 0, 1)');
+	Filters._svgDropshadowMergeNode.setAttribute('in', 'SourceGraphic');
 
 })();
