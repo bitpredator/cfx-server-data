@@ -172,7 +172,7 @@ end, true)
 
 -- COMPATIBILITY for server versions that don't export provide
 local function getExportEventName(resource, name)
-	return string.format('__cfx_export_%s_%s', resource, name)
+    return string.format('__cfx_export_%s_%s', resource, name)
 end
 
 function AddExport(name, fn)

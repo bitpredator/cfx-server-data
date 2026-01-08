@@ -1,8 +1,7 @@
--- This resource is part of the default Cfx.re asset pack (cfx-server-data)
--- Altering or recreating for local use only is strongly discouraged.
-
-version '1.0.0'
-author 'Cfx.re <root@cfx.re>'
+fx_version 'cerulean'
+games { 'gta5' }
+version '2.0.0'
+author 'Cfx.re <root@cfx.re> - Refactor Bitpredator'
 description 'Provides baseline chat functionality using a NUI-based interface.'
 repository 'https://github.com/citizenfx/cfx-server-data'
 
@@ -17,9 +16,6 @@ files {
   'html/vendor/*.css',
   'html/vendor/fonts/*.woff2',
 }
-
-fx_version 'adamant'
-games {'gta5' }
 
 dependencies {
   'yarn',

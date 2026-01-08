@@ -2,7 +2,6 @@ local isEnteringVehicle, isInVehicle, currentVehicle, currentSeat, ped
 
 CreateThread(function()
 	while true do
-
 		ped = PlayerPedId()
 
 		if not isInVehicle then
@@ -33,7 +32,7 @@ CreateThread(function()
 
 				currentVehicle = GetVehiclePedIsUsing(ped)
 				currentSeat = GetPedVehicleSeat(ped)
-				
+
 				local model = GetEntityModel(currentVehicle)
 				local vehicleName = GetDisplayNameFromVehicleModel(model)
 				local netId = VehToNet(currentVehicle)
@@ -47,7 +46,7 @@ CreateThread(function()
 				local model = GetEntityModel(currentVehicle)
 				local vehicleName = GetDisplayNameFromVehicleModel(model)
 				local netId = VehToNet(currentVehicle)
-				
+
 				TriggerEvent('baseevents:leftVehicle', currentVehicle, currentSeat, model, vehicleName)
 				TriggerServerEvent('baseevents:leftVehicle', currentVehicle, currentSeat, model, vehicleName, netId)
 
@@ -62,9 +61,9 @@ CreateThread(function()
 end)
 
 function GetPedVehicleSeat(ped)
-    local vehicle = GetVehiclePedIsIn(ped, false)
-    for i=-2,GetVehicleMaxNumberOfPassengers(vehicle) do
-        if(GetPedInVehicleSeat(vehicle, i) == ped) then return i end
-    end
-    return -2
+	local vehicle = GetVehiclePedIsIn(ped, false)
+	for i = -2, GetVehicleMaxNumberOfPassengers(vehicle) do
+		if (GetPedInVehicleSeat(vehicle, i) == ped) then return i end
+	end
+	return -2
 end

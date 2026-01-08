@@ -1,5 +1,6 @@
 -- Text entries
-AddTextEntry("FOUNTAIN_HELP", "This fountain currently contains $~1~.~n~Press ~INPUT_PICKUP~ to obtain $~2~.~n~Press ~INPUT_DETONATE~ to place $~3~.")
+AddTextEntry("FOUNTAIN_HELP",
+    "This fountain currently contains $~1~.~n~Press ~INPUT_PICKUP~ to obtain $~2~.~n~Press ~INPUT_DETONATE~ to place $~3~.")
 AddTextEntry("FOUNTAIN_HELP_DRAINED", "This fountain currently contains $~1~.~n~Press ~INPUT_DETONATE~ to place $~2~.")
 AddTextEntry("FOUNTAIN_HELP_BROKE", "This fountain currently contains $~1~.~n~Press ~INPUT_PICKUP~ to obtain $~2~.")
 AddTextEntry("FOUNTAIN_HELP_BROKE_N_DRAINED", "This fountain currently contains $~1~.")
@@ -34,7 +35,8 @@ CreateThread(function()
 
             if dist < MARKER_DISTANCE then
                 relevanceTimer = 0
-                DrawMarker(29, data.coords.x, data.coords.y, data.coords.z, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 0, 150, 0, 120, false, true, 2, false, nil, nil, false)
+                DrawMarker(29, data.coords.x, data.coords.y, data.coords.z, 0, 0, 0, 0, 0, 0, 1.0, 1.0, 1.0, 0, 150, 0,
+                    120, false, true, 2, false, nil, nil, false)
             else
                 relevanceTimer = 500
             end

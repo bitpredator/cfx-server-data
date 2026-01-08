@@ -13,13 +13,13 @@ AddEventHandler('rlUpdateNames', function()
 end)
 
 CreateThread(function()
-	while true do
-		Wait(0)
+    while true do
+        Wait(0)
 
-		if NetworkIsSessionStarted() then
-			TriggerServerEvent('rlPlayerActivated')
+        if NetworkIsSessionStarted() then
+            TriggerServerEvent('rlPlayerActivated')
 
-			return
-		end
-	end
+            return
+        end
+    end
 end)

@@ -34,7 +34,9 @@ AddEventHandler('getMapDirectives', function(add)
 
                 -- add the spawnpoint
                 addSpawnPoint({
-                    x = x, y = y, z = z,
+                    x = x,
+                    y = y,
+                    z = z,
                     heading = heading,
                     model = model
                 })
@@ -187,9 +189,9 @@ local function freezePlayer(id, freeze)
 end
 
 function loadScene(x, y, z)
-	if not NewLoadSceneStart then
-		return
-	end
+    if not NewLoadSceneStart then
+        return
+    end
 
     NewLoadSceneStart(x, y, z, 0.0, 0.0, 0.0, 20.0, 0)
 
@@ -269,10 +271,10 @@ function spawnPlayer(spawnIdx, cb)
 
             -- release the player model
             SetModelAsNoLongerNeeded(spawn.model)
-            
+
             -- RDR3 player model bits
             if N_0x283978a15512b2fe then
-				N_0x283978a15512b2fe(PlayerPedId(), true)
+                N_0x283978a15512b2fe(PlayerPedId(), true)
             end
         end
 

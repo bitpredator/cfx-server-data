@@ -154,12 +154,12 @@ local function refreshCommands()
     local suggestions = {}
 
     for _, command in ipairs(registeredCommands) do
-        if IsAceAllowed(('command.%s'):format(command.name)) and command.name ~= 'toggleChat' then
-            table.insert(suggestions, {
-                name = '/' .. command.name,
-                help = ''
-            })
-        end
+      if IsAceAllowed(('command.%s'):format(command.name)) and command.name ~= 'toggleChat' then
+        table.insert(suggestions, {
+          name = '/' .. command.name,
+          help = ''
+        })
+      end
     end
 
     TriggerEvent('chat:addSuggestions', suggestions)

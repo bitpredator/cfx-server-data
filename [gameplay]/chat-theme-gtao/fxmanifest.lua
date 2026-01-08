@@ -1,10 +1,7 @@
--- This resource is part of the default Cfx.re asset pack (cfx-server-data)
--- Altering or recreating for local use only is strongly discouraged.
-
+fx_version("cerulean")
 game("common")
-fx_version("adamant")
 version("2.0.0")
-author("Cfx.re <root@cfx.re>")
+author("Cfx.re <root@cfx.re> - Refactor Bitpredator")
 description("A GTA Online-styled theme for the chat resource.")
 repository("https://github.com/citizenfx/cfx-server-data")
 

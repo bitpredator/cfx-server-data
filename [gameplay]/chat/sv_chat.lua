@@ -186,7 +186,8 @@ local function routeMessage(source, author, message, mode, fromConsole)
         return
     end
 
-    TriggerEvent("chatMessage", source, #outMessage.args > 1 and outMessage.args[1] or "", outMessage.args[#outMessage.args])
+    TriggerEvent("chatMessage", source, #outMessage.args > 1 and outMessage.args[1] or "",
+        outMessage.args[#outMessage.args])
 
     if not WasEventCanceled() then
         if type(routingTarget) ~= "table" then
@@ -199,7 +200,8 @@ local function routeMessage(source, author, message, mode, fromConsole)
     end
 
     if not fromConsole then
-        print(author .. "^7" .. (modes[mode] and (" (" .. modes[mode].displayName .. ")") or "") .. ": " .. message .. "^7")
+        print(author ..
+        "^7" .. (modes[mode] and (" (" .. modes[mode].displayName .. ")") or "") .. ": " .. message .. "^7")
     end
 end
 
@@ -236,11 +238,13 @@ AddEventHandler("playerDropped", function(reason)
         return
     end
 
-    TriggerClientEvent("chatMessage", -1, "", { 255, 255, 255 }, "^2* " .. GetPlayerName(source) .. " left (" .. reason .. ")")
+    TriggerClientEvent("chatMessage", -1, "", { 255, 255, 255 },
+        "^2* " .. GetPlayerName(source) .. " left (" .. reason .. ")")
 end)
 
 RegisterCommand("say", function(source, args, rawCommand)
-    TriggerClientEvent("chatMessage", -1, (source == 0) and "console" or GetPlayerName(source), { 255, 255, 255 }, rawCommand:sub(5))
+    TriggerClientEvent("chatMessage", -1, (source == 0) and "console" or GetPlayerName(source), { 255, 255, 255 },
+        rawCommand:sub(5))
 end)
 
 -- command suggestions for clients

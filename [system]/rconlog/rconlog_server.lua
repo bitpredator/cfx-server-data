@@ -6,7 +6,8 @@ RegisterServerEvent("rlPlayerActivated")
 local names = {}
 
 AddEventHandler("rlPlayerActivated", function()
-    RconLog({ msgType = "playerActivated", netID = source, name = GetPlayerName(source), guid = GetPlayerIdentifiers(source)[1], ip = GetPlayerEP(source) })
+    RconLog({ msgType = "playerActivated", netID = source, name = GetPlayerName(source), guid = GetPlayerIdentifiers(
+    source)[1], ip = GetPlayerEP(source) })
 
     names[source] = { name = GetPlayerName(source), id = source }
 
@@ -49,7 +50,8 @@ AddEventHandler("playerDropped", function()
 end)
 
 AddEventHandler("chatMessage", function(netID, name, message)
-    RconLog({ msgType = "chatMessage", netID = netID, name = name, message = message, guid = GetPlayerIdentifiers(netID)[1] })
+    RconLog({ msgType = "chatMessage", netID = netID, name = name, message = message, guid = GetPlayerIdentifiers(netID)
+    [1] })
 end)
 
 -- NOTE: DO NOT USE THIS METHOD FOR HANDLING COMMANDS

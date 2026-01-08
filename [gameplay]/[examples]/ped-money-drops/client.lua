@@ -15,7 +15,8 @@ AddEventHandler("gameEventTriggered", function(eventName, args)
     local netId = PedToNet(victim)
 
     -- Crea il pickup a terra
-    local pickup = CreatePickupRotate(`PICKUP_MONEY_VARIABLE`, coords.x, coords.y, coords.z - 0.7, 0.0, 0.0, 0.0, 512, 0, false, 0)
+    local pickup = CreatePickupRotate(`PICKUP_MONEY_VARIABLE`, coords.x, coords.y, coords.z - 0.7, 0.0, 0.0, 0.0, 512, 0,
+    false, 0)
 
     -- Flag per terminare i thread
     local pickupHandled = false
