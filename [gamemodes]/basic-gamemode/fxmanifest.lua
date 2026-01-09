@@ -1,14 +1,14 @@
 -- This resource is part of the default Cfx.re asset pack (cfx-server-data)
 -- Altering or recreating for local use only is strongly discouraged.
 
-version("2.0.0")
+version("2.0.1")
 author("Cfx.re <root@cfx.re>")
 description("A basic freeroam gametype that uses the default spawn logic from spawnmanager.")
-repository("https://github.com/citizenfx/cfx-server-data")
+repository("https://github.com/bitpredator/cfx-server-data")
 
 resource_type("gametype")({ name = "Freeroam" })
 
 client_script("basic_client.lua")
 
 game("common")
-fx_version("adamant")
+fx_version("cerulean")

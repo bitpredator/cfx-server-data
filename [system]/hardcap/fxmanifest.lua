@@ -9,5 +9,5 @@ repository("https://github.com/bitpredator/cfx-server-data")
 client_script("client.lua")
 server_script("server.lua")
 
-fx_version("adamant")
+fx_version("cerulean")
 games({ "gta5" })
