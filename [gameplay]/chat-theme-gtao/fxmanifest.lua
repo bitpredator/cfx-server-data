@@ -2,8 +2,8 @@
 -- Altering or recreating for local use only is strongly discouraged.
 
 game("common")
-fx_version("adamant")
-version("2.0.0")
+fx_version("cerulean")
+version("2.0.1")
 author("Cfx.re <root@cfx.re>")
 description("A GTA Online-styled theme for the chat resource.")
 repository("https://github.com/bitpredator/cfx-server-data")
