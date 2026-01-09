@@ -3,7 +3,7 @@
 
 version("2.0.0")
 description("An example money system fountain spawn point.")
-repository("https://github.com/citizenfx/cfx-server-data")
+repository("https://github.com/bitpredator/cfx-server-data")
 author("Cfx.re <root@cfx.re>")
 
 fx_version("cerulean")

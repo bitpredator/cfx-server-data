@@ -4,7 +4,7 @@
 version '1.0.0'
 author 'Cfx.re <root@cfx.re>'
 description 'Handles the "host lock" for non-OneSync servers. Do not disable.'
-repository 'https://github.com/citizenfx/cfx-server-data'
+repository 'https://github.com/bitpredator/cfx-server-data'
 
 fx_version 'cerulean'
 games { 'gta4', 'gta5' }

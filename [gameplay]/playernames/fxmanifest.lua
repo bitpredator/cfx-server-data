@@ -4,7 +4,7 @@
 version '1.0.0'
 author 'Cfx.re <root@cfx.re>'
 description 'A basic resource for displaying player names.'
-repository 'https://github.com/citizenfx/cfx-server-data'
+repository 'https://github.com/bitpredator/cfx-server-data'
 
 -- add scripts
 client_script 'playernames_api.lua'

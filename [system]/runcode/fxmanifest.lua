@@ -4,7 +4,7 @@
 version("1.0.0")
 author("Cfx.re <root@cfx.re>")
 description("Allows server owners to execute arbitrary server-side or client-side JavaScript/Lua code. *Consider only using this on development servers.")
-repository("https://github.com/citizenfx/cfx-server-data")
+repository("https://github.com/bitpredator/cfx-server-data")
 
 game("common")
 fx_version("bodacious")

@@ -4,7 +4,7 @@
 version("2.0.0")
 description("An example money system client.")
 author("Cfx.re <root@cfx.re>")
-repository("https://github.com/citizenfx/cfx-server-data")
+repository("https://github.com/bitpredator/cfx-server-data")
 
 fx_version("bodacious")
 game("gta5")
